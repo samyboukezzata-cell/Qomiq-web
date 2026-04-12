@@ -89,6 +89,43 @@ export const alertsApi = {
     ),
 };
 
+// ── Import ────────────────────────────────────────────────────────────────────
+
+export const importApi = {
+  /** Upload multipart — pas de Content-Type (laissé au browser) */
+  upload: async (file: File): Promise<Record<string, unknown>> => {
+    const { getToken } = await import("./auth");
+    const form = new FormData();
+    form.append("file", file);
+    const res = await fetch(`${BASE_URL}/import/upload`, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${getToken()}` },
+      body: form,
+    });
+    if (!res.ok) {
+      const body = await res.json().catch(() => ({ detail: "Erreur upload." }));
+      throw new Error(typeof body.detail === "string" ? body.detail : "Erreur upload.");
+    }
+    return res.json();
+  },
+
+  validate: (payload: { mapping: Record<string, string>; data_type: string; rows: Record<string, unknown>[] }) =>
+    request<{
+      valid_rows: Record<string, unknown>[];
+      invalid_rows: Record<string, unknown>[];
+      warnings: string[];
+      stats: { total: number; valid: number; invalid: number };
+    }>("/import/validate", { method: "POST", body: JSON.stringify(payload) }),
+
+  save: (payload: { data_type: string; rows: Record<string, unknown>[]; merge_strategy: string }) =>
+    request<{ imported_count: number; data_type: string }>(
+      "/import/save",
+      { method: "POST", body: JSON.stringify(payload) }
+    ),
+
+  templateUrl: (dataType: string) => `${BASE_URL}/import/templates/${dataType}`,
+};
+
 // ── Health Score ──────────────────────────────────────────────────────────────
 
 export const healthApi = {
