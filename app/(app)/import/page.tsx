@@ -26,15 +26,15 @@ const REQUIRED_FIELDS: Record<string, string[]> = {
   pipeline:   ['nom'],
   ca_mensuel: ['mois', 'ca_realise'],
   contacts:   ['nom'],
-  budget:     ['nom'],
+  budget:     ['ligne', 'budget'],
   produits:   ['nom'],
 }
 
 const CANONICAL_FIELDS: Record<string, string[]> = {
   pipeline:   ['nom', 'client', 'montant', 'date_cloture', 'statut', 'date_modification'],
-  ca_mensuel: ['mois', 'ca_realise', 'objectif'],
+  ca_mensuel: ['mois', 'ca_realise', 'annee', 'ca_objectif', 'nb_commandes', 'nb_nouveaux_clients', 'periode'],
   contacts:   ['nom', 'email', 'telephone', 'societe', 'poste'],
-  budget:     ['nom', 'budget', 'reel'],
+  budget:     ['ligne', 'budget', 'reel', 'ecart', 'periode'],
   produits:   ['nom', 'marque', 'ca', 'ventes', 'stock'],
 }
 
