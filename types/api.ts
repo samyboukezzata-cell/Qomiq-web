@@ -124,6 +124,18 @@ export interface HealthScoreResult {
   inputs: Record<string, number>;
 }
 
+export interface HealthHistoryPoint {
+  score: number;
+  label: string;
+  color: string;
+  computed_at: string;
+  component_ca: number;
+  component_pipeline: number;
+  component_win_rate: number;
+  component_activite: number;
+  component_alertes: number;
+}
+
 // ── API Error ─────────────────────────────────────────────────────────────────
 
 export interface ApiError {
