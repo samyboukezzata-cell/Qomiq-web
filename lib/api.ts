@@ -133,3 +133,40 @@ export const healthApi = {
   history: (weeks = 8) =>
     request<HealthScoreResult[]>(`/health-score/history?weeks=${weeks}`),
 };
+
+// ── Coach IA ──────────────────────────────────────────────────────────────────
+
+export type AnalysisType = "pestel" | "bcg" | "ansoff" | "porter";
+
+export interface ChatMessage {
+  role: "user" | "assistant";
+  content: string;
+}
+
+export interface AnalyzeResult {
+  analysis_type: AnalysisType;
+  content: string;
+  model: string;
+}
+
+export interface HistoryEntry {
+  type: AnalysisType;
+  content: string;
+  created_at: string;
+}
+
+export const coachApi = {
+  analyze: (analysis_type: AnalysisType) =>
+    request<AnalyzeResult>("/coach/analyze", {
+      method: "POST",
+      body: JSON.stringify({ analysis_type }),
+    }),
+
+  chat: (message: string, history: ChatMessage[]) =>
+    request<ChatMessage>("/coach/chat", {
+      method: "POST",
+      body: JSON.stringify({ message, history }),
+    }),
+
+  history: () => request<HistoryEntry[]>("/coach/history"),
+};
