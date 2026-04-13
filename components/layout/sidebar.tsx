@@ -2,24 +2,33 @@
 
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
+import { useEffect, useState } from 'react'
 import { LayoutDashboard, Bell, Activity, Upload, LogOut } from 'lucide-react'
 import { removeToken } from '@/lib/auth'
-
-const navItems = [
-  { href: '/dashboard', label: 'Tableau de bord', icon: LayoutDashboard },
-  { href: '/alerts',    label: 'Alertes',          icon: Bell },
-  { href: '/health',    label: 'Score de santé',   icon: Activity },
-  { href: '/import',    label: 'Import données',   icon: Upload },
-]
+import { alertsApi } from '@/lib/api'
 
 export function Sidebar() {
   const pathname = usePathname()
   const router = useRouter()
+  const [unreadCount, setUnreadCount] = useState(0)
+
+  useEffect(() => {
+    alertsApi.list({ unread_only: true })
+      .then(data => setUnreadCount(data.length))
+      .catch(() => null)
+  }, [])
 
   const handleLogout = () => {
     removeToken()
     router.push('/login')
   }
+
+  const navItems = [
+    { href: '/dashboard', label: 'Tableau de bord', icon: LayoutDashboard, badge: 0 },
+    { href: '/alerts',    label: 'Alertes',          icon: Bell,            badge: unreadCount },
+    { href: '/health',    label: 'Score de santé',   icon: Activity,        badge: 0 },
+    { href: '/import',    label: 'Import données',   icon: Upload,          badge: 0 },
+  ]
 
   return (
     <aside className="w-64 h-screen bg-white border-r border-gray-200 flex flex-col fixed left-0 top-0 z-30">
@@ -52,7 +61,12 @@ export function Sidebar() {
               }`}
             >
               <Icon size={18} />
-              {item.label}
+              <span className="flex-1">{item.label}</span>
+              {item.badge > 0 && (
+                <span className="h-5 min-w-5 px-1.5 rounded-full bg-red-500 text-white text-xs font-bold flex items-center justify-center leading-none">
+                  {item.badge > 99 ? '99+' : item.badge}
+                </span>
+              )}
             </Link>
           )
         })}
