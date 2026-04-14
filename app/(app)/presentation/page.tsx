@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import {
   MonitorPlay, Download, RefreshCw, Loader2,
   TrendingUp, TrendingDown, Briefcase, Activity,
-  AlertTriangle, Brain, BarChart2,
+  AlertTriangle, Brain, BarChart2, Maximize, Minimize,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -61,6 +61,23 @@ export default function PresentationPage() {
   const [data, setData] = useState<PresentationData | null>(null)
   const [loading, setLoading] = useState(true)
   const [exporting, setExporting] = useState(false)
+  const [isFullscreen, setIsFullscreen] = useState(false)
+
+  const toggleFullscreen = () => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen()
+      setIsFullscreen(true)
+    } else {
+      document.exitFullscreen()
+      setIsFullscreen(false)
+    }
+  }
+
+  useEffect(() => {
+    const handler = () => setIsFullscreen(!!document.fullscreenElement)
+    document.addEventListener('fullscreenchange', handler)
+    return () => document.removeEventListener('fullscreenchange', handler)
+  }, [])
 
   const load = async () => {
     setLoading(true)
@@ -111,7 +128,7 @@ export default function PresentationPage() {
   const healthColor = health_score.score >= 75 ? 'text-emerald-600' : health_score.score >= 50 ? 'text-amber-500' : 'text-red-500'
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
+    <div className={`max-w-4xl mx-auto space-y-6 ${isFullscreen ? 'fixed inset-0 z-50 bg-white overflow-auto p-8' : ''}`}>
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
@@ -128,6 +145,10 @@ export default function PresentationPage() {
           <Button variant="outline" size="sm" onClick={load} disabled={loading}>
             <RefreshCw className="h-4 w-4 mr-1.5" />
             Actualiser
+          </Button>
+          <Button variant="outline" size="sm" onClick={toggleFullscreen}>
+            {isFullscreen ? <Minimize className="h-4 w-4 mr-1.5" /> : <Maximize className="h-4 w-4 mr-1.5" />}
+            {isFullscreen ? 'Quitter' : 'Plein écran'}
           </Button>
           <Button
             onClick={handleExport}
