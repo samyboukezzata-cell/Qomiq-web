@@ -6,6 +6,7 @@ import {
   BarChart2, TrendingUp, Compass, Shield, History, MessageSquare,
 } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { toast } from '@/components/ui/toaster'
@@ -31,7 +32,7 @@ function MarkdownContent({ content }: { content: string }) {
       prose-li:text-gray-600
       prose-strong:text-gray-800
       prose-code:bg-gray-100 prose-code:px-1 prose-code:rounded">
-      <ReactMarkdown>{content}</ReactMarkdown>
+      <ReactMarkdown remarkPlugins={[remarkGfm]}>{content}</ReactMarkdown>
     </div>
   )
 }

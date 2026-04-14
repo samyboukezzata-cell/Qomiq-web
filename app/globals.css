@@ -36,3 +36,23 @@
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
   }
 }
+
+/* ── Prose : tableaux et contenu markdown Coach IA ── */
+.prose table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.prose th {
+  background: #f0fdf9;
+  color: #0f6e56;
+  font-weight: 600;
+}
+.prose td,
+.prose th {
+  border: 1px solid #e2e8f0;
+  padding: 8px 12px;
+}
+.prose tr:nth-child(even) td {
+  background: #f8fafc;
+}
