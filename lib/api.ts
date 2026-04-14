@@ -155,6 +155,54 @@ export interface HistoryEntry {
   created_at: string;
 }
 
+// ── Présentation DG ───────────────────────────────────────────────────────────
+
+export interface PresentationData {
+  generated_at:  string
+  period:        string
+  user_name:     string
+  secteur:       string
+  kpis: {
+    ca_mois_courant:       number
+    ca_mois_precedent:     number
+    ca_growth_pct:         number | null
+    ca_label:              string
+    pipeline_total:        number
+    pipeline_count:        number
+    pipeline_closing_soon: number
+    budget_consomme_pct:   number
+    budget_lignes_over:    number
+  }
+  ca_history:    { label: string; ca_realise: number; objectif: number }[]
+  top_deals:     Record<string, unknown>[]
+  health_score:  { score: number; label: string; color: string }
+  alerts:        Record<string, unknown>[]
+  last_analysis: string | null
+}
+
+export const presentationApi = {
+  data: () => request<PresentationData>("/presentation/data"),
+
+  exportPdf: async (payload: PresentationData): Promise<Blob> => {
+    const { getToken } = await import("./auth")
+    const res = await fetch(`${BASE_URL}/presentation/export-pdf`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${getToken()}`,
+      },
+      body: JSON.stringify(payload),
+    })
+    if (!res.ok) {
+      const body = await res.json().catch(() => ({ detail: "Erreur PDF." }))
+      throw new Error(typeof body.detail === "string" ? body.detail : "Erreur PDF.")
+    }
+    return res.blob()
+  },
+}
+
+// ── Coach IA ──────────────────────────────────────────────────────────────────
+
 export const coachApi = {
   analyze: (analysis_type: AnalysisType) =>
     request<AnalyzeResult>("/coach/analyze", {
