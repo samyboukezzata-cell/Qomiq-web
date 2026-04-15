@@ -4,6 +4,9 @@ export interface UserResponse {
   id: number;
   email: string;
   full_name: string | null;
+  nom: string | null;
+  prenom: string | null;
+  secteur: string | null;
   is_active: boolean;
   is_admin: boolean;
   created_at: string;

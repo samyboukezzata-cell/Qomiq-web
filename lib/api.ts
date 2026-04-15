@@ -57,6 +57,22 @@ export const authApi = {
     }),
 
   me: () => request<UserResponse>("/auth/me"),
+
+  updateProfile: (data: { nom?: string; prenom?: string; secteur?: string }) =>
+    request<UserResponse>("/auth/me", {
+      method: "PUT",
+      body: JSON.stringify(data),
+    }),
+
+  changePassword: (data: {
+    current_password: string
+    new_password: string
+    confirm_password: string
+  }) =>
+    request<{ message: string }>("/auth/password", {
+      method: "PUT",
+      body: JSON.stringify(data),
+    }),
 };
 
 // ── Dashboard ─────────────────────────────────────────────────────────────────

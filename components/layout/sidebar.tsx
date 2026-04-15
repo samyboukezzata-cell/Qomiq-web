@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
-import { LayoutDashboard, Bell, Activity, Upload, Brain, MonitorPlay, LogOut } from 'lucide-react'
+import { LayoutDashboard, Bell, Activity, Upload, Brain, MonitorPlay, Settings, LogOut } from 'lucide-react'
 import { removeToken } from '@/lib/auth'
 import { alertsApi } from '@/lib/api'
 
@@ -30,6 +30,7 @@ export function Sidebar() {
     { href: '/import',    label: 'Import données',   icon: Upload,          badge: 0 },
     { href: '/coach',        label: 'Coach IA',          icon: Brain,        badge: 0 },
     { href: '/presentation', label: 'Mode Présentation', icon: MonitorPlay,  badge: 0 },
+    { href: '/settings',     label: 'Paramètres',        icon: Settings,     badge: 0 },
   ]
 
   return (
