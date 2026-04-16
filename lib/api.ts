@@ -177,6 +177,61 @@ export interface HistoryEntry {
   created_at: string;
 }
 
+// ── Pipeline CRM ──────────────────────────────────────────────────────────────
+
+export interface Deal {
+  id: string
+  nom: string
+  client: string
+  montant: number
+  etape: string
+  probabilite: number
+  date_cloture: string | null
+  commercial: string | null
+  notes: string | null
+  date_creation: string
+  date_modification: string
+}
+
+export interface PipelineStats {
+  total_value: number
+  count_active: number
+  count_won: number
+  count_lost: number
+  win_rate: number
+  avg_deal_size: number
+  by_etape: Record<string, { count: number; value: number }>
+  by_commercial: Record<string, { count: number; value: number }>
+}
+
+export const ETAPES = ["Prospect", "Qualification", "Proposition", "Négociation", "Gagné", "Perdu"] as const
+export type Etape = typeof ETAPES[number]
+
+export const pipelineApi = {
+  list: (filters?: { etape?: string; commercial?: string; search?: string }) => {
+    const qs = new URLSearchParams()
+    if (filters?.etape)      qs.set("etape", filters.etape)
+    if (filters?.commercial) qs.set("commercial", filters.commercial)
+    if (filters?.search)     qs.set("search", filters.search)
+    const query = qs.toString() ? `?${qs}` : ""
+    return request<Deal[]>(`/pipeline/${query}`)
+  },
+
+  stats: () => request<PipelineStats>("/pipeline/stats"),
+
+  create: (data: Omit<Deal, "id" | "date_creation" | "date_modification">) =>
+    request<Deal>("/pipeline/", { method: "POST", body: JSON.stringify(data) }),
+
+  update: (id: string, data: Partial<Omit<Deal, "id" | "date_creation" | "date_modification">>) =>
+    request<Deal>(`/pipeline/${id}`, { method: "PUT", body: JSON.stringify(data) }),
+
+  updateEtape: (id: string, data: { etape: string; probabilite?: number }) =>
+    request<Deal>(`/pipeline/${id}/etape`, { method: "PATCH", body: JSON.stringify(data) }),
+
+  delete: (id: string) =>
+    request<{ success: boolean }>(`/pipeline/${id}`, { method: "DELETE" }),
+}
+
 // ── Présentation DG ───────────────────────────────────────────────────────────
 
 export interface PresentationData {
