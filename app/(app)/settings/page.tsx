@@ -1,7 +1,8 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Settings, User, Lock, Info, Eye, EyeOff } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { Settings, User, Lock, Info, Eye, EyeOff, Rocket } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { toast } from '@/components/ui/toaster'
@@ -45,6 +46,7 @@ function fmtDate(iso: string): string {
 // ── Page ─────────────────────────────────────────────────────────────────────
 
 export default function SettingsPage() {
+  const router = useRouter()
   const [user, setUser] = useState<UserResponse | null>(null)
 
   // Profil
@@ -61,6 +63,7 @@ export default function SettingsPage() {
   const [showNew,     setShowNew]     = useState(false)
   const [showConfirm, setShowConfirm] = useState(false)
   const [savingPwd,   setSavingPwd]   = useState(false)
+  const [resettingOnboarding, setResettingOnboarding] = useState(false)
 
   useEffect(() => {
     authApi.me().then((u) => {
@@ -106,6 +109,18 @@ export default function SettingsPage() {
       toast({ variant: 'destructive', title: 'Erreur', description: (err as Error).message })
     } finally {
       setSavingPwd(false)
+    }
+  }
+
+  const handleResetOnboarding = async () => {
+    setResettingOnboarding(true)
+    try {
+      await authApi.resetOnboarding()
+      localStorage.removeItem('qomiq_welcome_seen')
+      router.push('/dashboard')
+    } catch (err) {
+      toast({ variant: 'destructive', title: 'Erreur', description: (err as Error).message })
+      setResettingOnboarding(false)
     }
   }
 
@@ -336,6 +351,34 @@ export default function SettingsPage() {
               </dd>
             </div>
           </dl>
+        </CardContent>
+      </Card>
+
+      {/* ── Section 4 : Onboarding ─────────────────────────────────────────── */}
+      <Card className="shadow-sm">
+        <CardHeader className="pb-3">
+          <CardTitle className="flex items-center gap-2 text-base font-semibold text-gray-800">
+            <Rocket className="h-4 w-4 text-teal-600" />
+            Onboarding
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-700">Relancer le guide d'accueil</p>
+              <p className="text-xs text-gray-400 mt-0.5">
+                Réaffiche la checklist et le modal de bienvenue sur le tableau de bord.
+              </p>
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleResetOnboarding}
+              disabled={resettingOnboarding}
+            >
+              {resettingOnboarding ? 'Redirection…' : 'Relancer'}
+            </Button>
+          </div>
         </CardContent>
       </Card>
     </div>

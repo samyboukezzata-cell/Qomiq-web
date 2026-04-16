@@ -73,6 +73,12 @@ export const authApi = {
       method: "PUT",
       body: JSON.stringify(data),
     }),
+
+  completeOnboarding: () =>
+    request<UserResponse>("/auth/complete-onboarding", { method: "POST" }),
+
+  resetOnboarding: () =>
+    request<UserResponse>("/auth/reset-onboarding", { method: "POST" }),
 };
 
 // ── Dashboard ─────────────────────────────────────────────────────────────────

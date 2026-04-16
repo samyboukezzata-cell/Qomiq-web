@@ -1,5 +1,11 @@
 // ── Auth ──────────────────────────────────────────────────────────────────────
 
+export interface HasData {
+  pipeline: boolean;
+  ca_mensuel: boolean;
+  has_generated_analysis: boolean;
+}
+
 export interface UserResponse {
   id: number;
   email: string;
@@ -7,9 +13,11 @@ export interface UserResponse {
   nom: string | null;
   prenom: string | null;
   secteur: string | null;
+  onboarding_completed: boolean;
   is_active: boolean;
   is_admin: boolean;
   created_at: string;
+  has_data?: HasData;
 }
 
 export interface Token {
