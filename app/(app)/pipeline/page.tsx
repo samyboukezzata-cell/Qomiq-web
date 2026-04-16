@@ -117,7 +117,7 @@ function KanbanColumn({
   const ids = deals.map((d) => d.id)
 
   return (
-    <div className={`flex flex-col rounded-xl border ${c.border} ${c.bg} min-w-[220px] w-56 shrink-0`}>
+    <div className={`flex flex-col rounded-xl border ${c.border} ${c.bg} w-full min-h-[400px]`}>
       <div className="px-3 py-2.5 border-b border-current/10">
         <div className="flex items-center justify-between mb-0.5">
           <span className="text-xs font-bold text-gray-700 uppercase tracking-wide">{etape}</span>
@@ -458,7 +458,7 @@ export default function PipelinePage() {
           onDragStart={handleDragStart}
           onDragEnd={handleDragEnd}
         >
-          <div className="flex gap-3 overflow-x-auto pb-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {ETAPES.map((etape) => (
               <KanbanColumn
                 key={etape}
